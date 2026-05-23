@@ -209,14 +209,17 @@ html, body {
 /* ── APP ── */
 .app {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
-  height: calc(var(--vh, 1vh) * 100);
+  overflow: hidden;
 }
 
 .bg-photo {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: url('bg.jpg') center center / cover no-repeat;
   z-index: 0;
@@ -227,8 +230,9 @@ html, body {
   position: relative;
   z-index: 1;
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 52px 14px 12px;
+  padding: 52px 14px 80px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -327,8 +331,11 @@ html, body {
 
 /* ── INPUT BAR ── */
 .input-bar {
-  position: relative;
-  z-index: 1;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
   display: flex;
   align-items: flex-end;
   gap: 8px;

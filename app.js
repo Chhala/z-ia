@@ -106,12 +106,10 @@ const audioEl          = document.getElementById('ambientSound');
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 
-  // iOS : recalcule la hauteur quand le clavier apparaît/disparaît
-  function fixViewport() {
-    document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
-  }
-  fixViewport();
-  window.addEventListener('resize', fixViewport);
+  // iOS : scroll vers le bas quand le clavier apparaît
+  window.addEventListener('resize', () => {
+    setTimeout(() => scroll(), 50);
+  });
 })();
 
 // ── MODAL ────────────────────────────────────────────────────

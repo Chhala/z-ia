@@ -2,7 +2,7 @@
 const GEMINI_MODEL = 'gemini-2.5-flash';
 const STORAGE_KEY  = 'zombicide_api_key_v2';
 const SOUND_KEY    = 'zombicide_sound_v2';
-const HOLD_DELAY   = 1000; // ms pour activer le micro
+const HOLD_DELAY   = 900; // ms pour activer le micro
 
 const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
 Tu réponds UNIQUEMENT en français, de manière claire et précise.
@@ -331,16 +331,51 @@ async function callGemini(conv) {
   return txt;
 }
 
-// ── MESSAGES ─────────────────────────────────────────────────
+// ── MESSAGES ───────────────────────────────────────────────────────────────
+const BUBBLE_HOLD_DELAY = 700;
+
 function addMessage(role, text) {
   const wrap   = document.createElement('div');
   wrap.className = role === 'user' ? 'msg-user' : 'msg-bot';
   const bubble = document.createElement('div');
   bubble.className = 'bubble bubble-in';
   bubble.innerHTML = renderMd(text);
+
+  if (role === 'user') {
+    let bht = null;
+    bubble.addEventListener('pointerdown', e => {
+      if (e.target !== bubble) return;
+      bht = setTimeout(() => { bht = null; replayQuestion(text, bubble); }, BUBBLE_HOLD_DELAY);
+    });
+    bubble.addEventListener('pointerup',    () => { if (bht) { clearTimeout(bht); bht = null; } });
+    bubble.addEventListener('pointerleave', () => { if (bht) { clearTimeout(bht); bht = null; } });
+    bubble.addEventListener('contextmenu',  e  => e.preventDefault());
+  }
+
   wrap.appendChild(bubble);
   messagesEl.appendChild(wrap);
   scroll();
+}
+
+async function replayQuestion(text, bubble) {
+  if (loading) return;
+  bubble.classList.add('replaying');
+  setTimeout(() => bubble.classList.remove('replaying'), 400);
+  history.push({ role: 'user', parts: [{ text }] });
+  scheduleSoundIfNeeded();
+  const typingId = addTyping();
+  loading = true;
+  try {
+    const reply = await callGemini(history);
+    removeEl(typingId);
+    addMessage('bot', reply);
+    history.push({ role: 'model', parts: [{ text: reply }] });
+  } catch (err) {
+    removeEl(typingId);
+    addMessage('bot', '⚠ ' + err.message);
+  } finally {
+    loading = false;
+  }
 }
 
 function addTyping() {

@@ -232,7 +232,7 @@ html, body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 52px 14px 80px;
+  padding: 70px 14px 80px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -261,6 +261,13 @@ html, body {
     100% 0%, 99% 95%, 100% 100%,
     3% 98%, 0% 100%
   );
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Feedback visuel appui long */
+.msg-user .bubble.replaying {
+  opacity: 0.6;
+  transition: opacity 0.15s;
 }
 
 /* Bot bubble — centered */

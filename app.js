@@ -2,7 +2,7 @@
 const GEMINI_MODEL = 'gemini-2.5-flash';
 const STORAGE_KEY  = 'zombicide_api_key_v2';
 const SOUND_KEY    = 'zombicide_sound_v2';
-const HOLD_DELAY   = 1500; // ms pour activer le micro
+const HOLD_DELAY   = 1000; // ms pour activer le micro
 
 const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
 Tu réponds UNIQUEMENT en français, de manière claire et précise.

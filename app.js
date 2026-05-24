@@ -170,12 +170,10 @@ function setupSettingsEvents() {
   });
 }
 
+// ... (fonctions intermédiaires inchangées)
 function openSettings()  { settingsMenu.classList.remove('hidden'); settingsBackdrop.classList.remove('hidden'); }
 function closeSettings() { settingsMenu.classList.add('hidden');    settingsBackdrop.classList.add('hidden'); }
-
-function updateSoundLabel() {
-  menuSound.textContent = soundEnabled ? 'Son : activé' : 'Son : désactivé';
-}
+function updateSoundLabel() { menuSound.textContent = soundEnabled ? 'Son : activé' : 'Son : désactivé'; }
 
 // ── TEXTAREA ─────────────────────────────────────────────────
 function setupInputEvents() {
@@ -183,16 +181,11 @@ function setupInputEvents() {
   userInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   });
-  // Prevent paste with formatting
   userInput.addEventListener('paste', e => {
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
     document.execCommand('insertText', false, text);
   });
-}
-
-function autoResize() {
-  // contenteditable auto-sizes; no action needed
 }
 
 function updateActionBtn() {
@@ -204,29 +197,18 @@ function updateActionBtn() {
 
 // ── ACTION BUTTON — envoi + push-to-talk ─────────────────────
 function setupActionBtn() {
-  // Pointer down : lance le timer long press
   actionBtn.addEventListener('pointerdown', e => {
     e.preventDefault();
     holdActive = false;
-    holdTimer = setTimeout(() => {
-      holdActive = true;
-      startListening();
-    }, HOLD_DELAY);
+    holdTimer = setTimeout(() => { holdActive = true; startListening(); }, HOLD_DELAY);
   });
 
-  // Pointer up : court = envoie ; long = arrête micro
   actionBtn.addEventListener('pointerup', e => {
     e.preventDefault();
     if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-    if (holdActive) {
-      stopListening();
-      holdActive = false;
-    } else {
-      if (getInputText()) handleSend();
-    }
+    if (holdActive) { stopListening(); holdActive = false; } else { if (getInputText()) handleSend(); }
   });
 
-  // Si le doigt quitte le bouton pendant le hold
   actionBtn.addEventListener('pointerleave', () => {
     if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
     if (isListening) { stopListening(); holdActive = false; }
@@ -241,9 +223,7 @@ async function handleSend() {
   if (!text || loading) return;
   if (!apiKey) { app.classList.add('hidden'); modalOverlay.classList.remove('hidden'); return; }
 
-  // Ferme le clavier sur iOS
   userInput.blur();
-
   addMessage('user', text);
   history.push({ role: 'user', parts: [{ text }] });
 
@@ -252,7 +232,6 @@ async function handleSend() {
   loading = true;
 
   scheduleSoundIfNeeded();
-
   const typingId = addTyping();
 
   try {
@@ -268,12 +247,11 @@ async function handleSend() {
   }
 }
 
-// ── SON ───────────────────────────────────────────────────────
 function scheduleSoundIfNeeded() {
   if (!soundEnabled) return;
   if (soundTimer) { clearTimeout(soundTimer); soundTimer = null; }
-  if (Math.random() > 0.70) return; // 30% : silence
-  const delay = (7 + Math.random() * 8) * 1000; // 7–15 s
+  if (Math.random() > 0.70) return;
+  const delay = (7 + Math.random() * 8) * 1000;
   soundTimer = setTimeout(() => {
     if (!soundEnabled) return;
     audioEl.currentTime = 0;
@@ -306,7 +284,8 @@ RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer une règle 
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      system_instruction: { parts: [{ text: dynamicPrompt }] },
+      // LA CORRECTION CRUCIALE EST ICI : systemInstruction au lieu de system_instruction
+      systemInstruction: { parts: [{ text: dynamicPrompt }] },
       contents: conv,
       generationConfig: {
         temperature: 0.35,
@@ -328,7 +307,7 @@ RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer une règle 
     const m = e?.error?.message || '';
     if (res.status === 400) throw new Error('Clé API invalide ou requête incorrecte.');
     if (res.status === 403) throw new Error('Accès refusé. Vérifie ta clé API.');
-    if (res.status === 429) throw new Error('Quota dépassé. Attends quelques secondes et réessaie. Si le problème persiste, vérifie les limites de ta clé sur aistudio.google.com');
+    if (res.status === 429) throw new Error('Quota dépassé. Attends quelques secondes et réessaie.');
     throw new Error(m || `Erreur HTTP ${res.status}`);
   }
 
@@ -338,121 +317,18 @@ RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer une règle 
   return txt;
 }
 
-// ── MESSAGES ───────────────────────────────────────────────────────────────
+// ... (fonctions de rendu des messages et Speech-to-text inchangées)
 function addMessage(role, text) {
-  const wrap   = document.createElement('div');
-  wrap.className = role === 'user' ? 'msg-user' : 'msg-bot';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble bubble-in';
-  bubble.innerHTML = renderMd(text);
-
-  if (role === 'user') {
-    // Double tap pour rejouer la question
-    let lastTap = 0;
-    bubble.addEventListener('pointerup', () => {
-      const now = Date.now();
-      if (now - lastTap < 350) {
-        replayQuestion(text, bubble);
-      }
-      lastTap = now;
-    });
-  }
-
-  wrap.appendChild(bubble);
-  messagesEl.appendChild(wrap);
-  scroll();
+  const wrap = document.createElement('div'); wrap.className = role === 'user' ? 'msg-user' : 'msg-bot';
+  const bubble = document.createElement('div'); bubble.className = 'bubble bubble-in'; bubble.innerHTML = renderMd(text);
+  if (role === 'user') { let lastTap = 0; bubble.addEventListener('pointerup', () => { const now = Date.now(); if (now - lastTap < 350) { replayQuestion(text, bubble); } lastTap = now; }); }
+  wrap.appendChild(bubble); messagesEl.appendChild(wrap); scroll();
 }
-
-async function replayQuestion(text, bubble) {
-  if (loading) return;
-  bubble.classList.add('replaying');
-  setTimeout(() => bubble.classList.remove('replaying'), 400);
-  history.push({ role: 'user', parts: [{ text }] });
-  scheduleSoundIfNeeded();
-  const typingId = addTyping();
-  loading = true;
-  try {
-    const reply = await callGemini(history.slice(-MAX_HISTORY));
-    removeEl(typingId);
-    addMessage('bot', reply);
-    history.push({ role: 'model', parts: [{ text: reply }] });
-  } catch (err) {
-    removeEl(typingId);
-    addMessage('bot', '⚠ ' + err.message);
-  } finally {
-    loading = false;
-  }
-}
-
-function addTyping() {
-  const id   = 'typing_' + Date.now();
-  const wrap = document.createElement('div');
-  wrap.className = 'msg-typing';
-  wrap.id = id;
-  wrap.innerHTML = '<div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  messagesEl.appendChild(wrap);
-  scroll();
-  return id;
-}
-
+async function replayQuestion(text, bubble) { if (loading) return; bubble.classList.add('replaying'); setTimeout(() => bubble.classList.remove('replaying'), 400); history.push({ role: 'user', parts: [{ text }] }); scheduleSoundIfNeeded(); const typingId = addTyping(); loading = true; try { const reply = await callGemini(history.slice(-MAX_HISTORY)); removeEl(typingId); addMessage('bot', reply); history.push({ role: 'model', parts: [{ text: reply }] }); } catch (err) { removeEl(typingId); addMessage('bot', '⚠ ' + err.message); } finally { loading = false; } }
+function addTyping() { const id = 'typing_' + Date.now(); const wrap = document.createElement('div'); wrap.className = 'msg-typing'; wrap.id = id; wrap.innerHTML = '<div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>'; messagesEl.appendChild(wrap); scroll(); return id; }
 function removeEl(id) { const el = document.getElementById(id); if (el) el.remove(); }
-
-function scroll() {
-  messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
-}
-
-// ── MARKDOWN LÉGER ────────────────────────────────────────────
-function renderMd(text) {
-  return text
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^[-•] (.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')
-    .split('\n\n')
-    .map(p => {
-      p = p.trim();
-      if (!p) return '';
-      if (p.startsWith('<ul>') || p.startsWith('<li>')) return p;
-      return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
-    })
-    .join('');
-}
-
-// ── RECONNAISSANCE VOCALE (PUSH-TO-TALK) ─────────────────────
-function setupSpeech() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return;
-
-  recognition = new SR();
-  recognition.lang            = 'fr-FR';
-  recognition.continuous      = false;
-  recognition.interimResults  = true;
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    isListening = true;
-    actionBtn.classList.add('listening');
-  };
-
-  recognition.onresult = e => {
-    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
-    userInput.innerText = transcript;
-    updateActionBtn();
-  };
-
-  recognition.onerror = () => { isListening = false; actionBtn.classList.remove('listening'); };
-  recognition.onend   = () => { isListening = false; actionBtn.classList.remove('listening'); updateActionBtn(); };
-}
-
-function startListening() {
-  if (!recognition || isListening) return;
-  clearInput();
-  updateActionBtn();
-  try { recognition.start(); } catch(e) {}
-}
-
-function stopListening() {
-  if (!recognition || !isListening) return;
-  try { recognition.stop(); } catch(e) {}
-}
+function scroll() { messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' }); }
+function renderMd(text) { return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>').replace(/^[-•] (.+)$/gm, '<li>$1</li>').replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>').split('\n\n').map(p => { p = p.trim(); if (!p) return ''; if (p.startsWith('<ul>') || p.startsWith('<li>')) return p; return '<p>' + p.replace(/\n/g, '<br>') + '</p>'; }).join(''); }
+function setupSpeech() { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return; recognition = new SR(); recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = true; recognition.maxAlternatives = 1; recognition.onstart = () => { isListening = true; actionBtn.classList.add('listening'); }; recognition.onresult = e => { const transcript = Array.from(e.results).map(r => r[0].transcript).join(''); userInput.innerText = transcript; updateActionBtn(); }; recognition.onerror = () => { isListening = false; actionBtn.classList.remove('listening'); }; recognition.onend = () => { isListening = false; actionBtn.classList.remove('listening'); updateActionBtn(); }; }
+function startListening() { if (!recognition || isListening) return; clearInput(); updateActionBtn(); try { recognition.start(); } catch(e) {} }
+function stopListening() { if (!recognition || !isListening) return; try { recognition.stop(); } catch(e) {} }

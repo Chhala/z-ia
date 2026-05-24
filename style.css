@@ -392,8 +392,8 @@ html, body {
 
 /* ── ACTION BUTTON ── */
 .action-btn {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: var(--white);
   border: none;
   cursor: pointer;

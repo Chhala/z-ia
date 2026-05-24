@@ -6,10 +6,11 @@ const HOLD_DELAY   = 900; // ms pour activer le micro
 
 const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
 Tu réponds UNIQUEMENT en français, de manière claire et précise.
-Tu bases tes réponses exclusivement sur les règles officielles fournies.
+Tu bases tes réponses exclusivement sur les règles officielles fournies, mot pour mot si nécessaire.
 Si une situation n'est pas couverte, dis-le clairement.
 Sois concis. Pas d'intro ni de formule de politesse.
 Ne réponds qu'aux questions liées à Zombicide.
+IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux Dark Zones, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
 
 RÈGLES OFFICIELLES :
 ${typeof ZOMBICIDE_RULES !== 'undefined' ? ZOMBICIDE_RULES : '[Règles non chargées]'}`;
@@ -302,7 +303,7 @@ async function callGemini(conv) {
       system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: conv,
       generationConfig: {
-        temperature: 0.35,
+        temperature: 0.15,
         topK: 32,
         topP: 0.9,
         maxOutputTokens: 2500,

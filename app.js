@@ -278,7 +278,7 @@ Ne réponds qu'aux questions liées à Zombicide.
 RÈGLES OFFICIELLES :
 ${airTightRules}
 
-RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer une règle ou de te baser sur d'autres jeux. Si la situation demandée n'est pas explicitement décrite dans les RÈGLES OFFICIELLES ci-dessus, réponds strictement : "Cette situation n'est pas couverte par les règles fournies."`;
+RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer des règles de jeu ou de te baser sur d'autres versions/jeux. Base-toi uniquement sur les faits du document. Cependant, autorise les synonymes logiques courants (par exemple, comprendre que "pénétrer" ou "rentrer" fait référence à la section "ENTRER DANS UN BÂTIMENT"). Si la mécanique de jeu demandée n'est pas du tout traitée dans les RÈGLES OFFICIELLES, réponds strictement : "Cette situation n'est pas couverte par les règles fournies."`;
 
   const res = await fetch(url, {
     method: 'POST',

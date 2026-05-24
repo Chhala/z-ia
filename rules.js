@@ -25,7 +25,7 @@ const ZOMBICIDE_RULES = `
 
 ### ROUNDS DE JEU
 Chaque Round de jeu se déroule comme suit :
-1. PHASE DES JOUEURS : Le joueur possédant le pion Premier Joueur active ses Survivants un par un, dans l'ordre de son choix. Chaque Survivant effectue initialement 3 Actions par Tour. Lorsqu'un joueur a activé tous ses Survivants, le joueur à sa gauche prend son Tour. Lorsque tous les joueurs ont terminé leur Tour, la Phase des Joueurs prend fin.
+1. PHASE DES JOUEURS : Le joueur possédant le pion Premier Joueur active ses Survivants un par un, dans l'ordre de son choix. Each Survivant effectue initialement 3 Actions par Tour. Lorsqu'un joueur a activé tous ses Survivants, le joueur à sa gauche prend son Tour. Lorsque tous les joueurs ont terminé leur Tour, la Phase des Joueurs prend fin.
 2. PHASE DES ZOMBIES : Tous les Zombies sur le plateau s'activent et dépensent 1 Action soit pour attaquer un Survivant qui se trouve dans leur Zone, soit, s'ils n'ont personne à attaquer, pour se Déplacer vers les Survivants. Les Forcenés obtiennent 2 Actions. Une fois que tous les Zombies ont effectué leurs Actions, de nouveaux Zombies apparaissent dans toutes les Zones d'Invasion actives.
 3. PHASE DE FIN : Retirez tous les pions Bruit du plateau. Le premier joueur passe le pion Premier Joueur au joueur assis à sa gauche. Un nouveau Round de jeu commence alors.
 
@@ -49,7 +49,7 @@ Chaque Round de jeu se déroule comme suit :
 * Se déplacer : Se déplacer de 1 Zone, en payant des actions supplémentaires pour quitter une Zone contenant des Zombies.
 * Fouiller (1x per Tour) : Uniquement dans les Zones de bâtiment exemptes de Zombies. Piochez la carte supérieure de la pile Équipement. Vous pouvez la placer dans votre inventaire ou la défausser immédiatement.
 * Action de Porte : Utilisez un Équipement d'ouverture de porte pour ouvrir une porte dans votre Zone. Placez un pion Porte sur sa face ouverte. Les portes ouvertes ne peuvent plus être refermées. Les portes de couleur ne peuvent pas être ouvertes tant que les conditions spécifiques de la Mission ne sont pas remplies.
-* Réorganiser / Échanger : Réorganisez les cartes d'inventaire ou échangez un nombre quelconque de cartes avec 1 autre Survivant situé dans la même Zone (qui peut alors se réorganiser gratuitement). Les échanges n'ont pas besoin d'être équitables.
+* Réorganiser / Échanger : Réorganisez les cartes d'inventaire ou échangez un noble quelconque de cartes avec 1 autre Survivant situé dans la même Zone (qui peut alors se réorganiser gratuitement). Les échanges n'ont pas besoin d'être équitables.
 * Actions de Combat : Dépensez des actions pour effectuer des Attaques au corps à corps ou des Attaques à distance en utilisant des armes équipées tenues dans les emplacements Mains.
 * Prendre ou Activer un Objectif : Prenez ou activez un pion Objectif situé dans la même Zone ; rapporte 5 Points d'Adrénaline, sauf indication contraire de la Mission.
 * Faire du Bruit : Placez un pion Bruit dans la Zone du Survivant.
@@ -70,7 +70,7 @@ Chaque Round de jeu se déroule comme suit :
 * Balèze : Inflige 1 Blessure. Tué par une touche de Dégât 2 ; les armes de Dégât 1 n'ont absolument aucun effet sur eux. Rapporte 1 Point d'Adrénaline.
 * Forcené : Inflige 1 Blessure. Tué par une touche de Dégât 1. Rapporte 1 Point d'Adrénaline. Spécial : Les Forcenés ont 2 Actions à chaque fois qu'ils s'activent.
 * Abomination : Inflige 1 Blessure. Seules les armes infligeant 3 Dégâts ou plus, ou un cocktail Molotov, peuvent la tuer. Rapporte 5 Points d'Adrénaline. Une seule Abomination peut se trouver sur le plateau à un moment donné ; si une autre carte en fait apparaître une, elle obtient une Activation supplémentaire à la place.
-* Pénurie de figurines : Si vous viens à manquer de figurines du type requis lors d'une apparition, placez les figurines restantes, quelles qu'elles soient. Ensuite, tous les Zombies du type indiqué présents sur le plateau effectuent immédiatement une Activation supplémentaire. Plusieurs activations supplémentaires peuvent se produire à la suite.
+* Pénurie de figurines : Si vous venez à manquer de figurines du type requis lors d'une apparition, placez les figurines restantes, quelles qu'elles soient. Ensuite, tous les Zombies du type indiqué présents sur le plateau effectuent immédiatement une Activation supplémentaire. Plusieurs activations supplémentaires peuvent se produire à la suite.
 
 #### Règles spéciales des Abominations de la Boîte de Base :
 * Hobomination : Les Survivants se trouvant dans sa Zone ne peuvent pas effectuer d'Actions de Combat.
@@ -147,7 +147,7 @@ Chaque Round de jeu se déroule comme suit :
 
 ### TRAITS SPÉCIAUX DE L'ÉQUIPEMENT
 * Lampe de poche : Octroie au Survivant la compétence « Fouille : 2 cartes » lors d'une fouille. Annule les pénalités de précision dans les Zones d'ombre. Ne se cumule pas avec une autre Lampe de poche. Peut être utilisé dans le Sac à dos.
-* Molotov : Effectuez une Action à distance avec le Molotov en Main, défaussez la carte et créez une explosion dans la Zone ciblée. Tous les Acteurs de la Zone cible sont immédiatement éliminés, quel que soit leur seuil de Dégâts (y compris les Abominations).
+* Molotov : Effectuez une Action à distance avec le Molotov en Main, défaussez la carte et créez une explosion dans la Zone ciblée. Tous les Acteurs de la Zone cible sont immédiatement éliminés, quel que soit leur seuil de Dégâts (y compris les Abominations). 
 * Recharger : Les armes dotées de ce trait (ex. : fusil à canon scié, Ma's Shotgun) sont vidées à chaque fois qu'elles font feu. Un Survivant doit dépenser 1 Action pour Recharger l'arme s'il souhaite l'utiliser à nouveau durant le même Round de jeu. Toutes les armes rechargeables sont rechargées automatiquement et gratuitement durant la Phase de Fin. Une seule Action peut recharger 2 armes utilisées de manière Double.
 
 ---
@@ -155,7 +155,7 @@ Chaque Round de jeu se déroule comme suit :
 ### MODES DE JEU ADDITIONNELS
 * Mode Zones d'ombre : Les Acteurs ne peuvent pas tracer de Lignes de vue vers les Zones d'ombre sauf à une Portée de 0-1. Les Attaques à distance visant des Zones d'ombre ont une Précision pénalisée à 6+ (obtenir un 6 est requis pour toucher). Posséder une Lampe de poche annule cette pénalité. Les Attaques au corps à corps ne sont pas affectées par les Zones d'ombre.
 * Mode Compagnons : Les Compagnons jouent le rôle de personnages de soutien qui suivent les Survivants. Traits Généraux : Ils comptent pour 1 Bruit, sont touchés par le Tir Ami, n'ont ni inventaire ni actions, et sont immédiatement éliminés s'ils reçoivent une seule Blessure (ce qui entraîne la défaite de la partie). Ils restent toujours exactement dans la même Zone que leur Leader. Leur Leader gagne et bénéficie de la Compétence de Niveau de Danger Bleu du Compagnon. N'importe quel Survivant peut dépenser 1 Action pour rallier un Compagnon esseulé dans sa Zone afin de devenir son nouveau Leader.
-* Mode Ultrared : Permet aux Survivants de gagner des Points d'Adrénaline au-delà du Niveau de Danger Rouge. Lorsqu'un Survivant atteint le maximum du Niveau Rouge, remettez le pointeur d'Adrénaline à 0. Le Survivant est toujours considéré au Niveau Rouge et conserve toutes ses Compétences débloquées. Continuez à compter les PA normalement ; en atteignant à nouveau les Niveaux de Danger, sélectionnez les Compétences restantes non choisies ou sélectionnez n'importe quelle nouvelle Compétence de la liste principale une fois que toutes les compétences du personnage sont entièrement débloquées.
+* Mode Ultrared : Permet aux Survivants de gagner des Points d'Adrénaline au-delà du Niveau de Danger Rouge. Lorsqu'un Survivant atteint le maximum du Niveau Rouge, remettez le pointeur d'Adrénaline à 0. Le Survivant is toujours considéré au Niveau Rouge et conserve toutes ses Compétences débloquées. Continuez à compter les PA normalement ; en atteignant à nouveau les Niveaux de Danger, sélectionnez les Compétences restantes non choisies ou sélectionnez n'importe quelle nouvelle Compétence de la liste principale une fois que toutes les compétences du personnage sont entièrement débloquées.
 
 ---
 
@@ -170,7 +170,7 @@ Chaque Round de jeu se déroule comme suit :
 * [Type d'Action] : Dégât 2 : Les armes du type indiqué (Combat, Corps à corps ou À distance) utilisées par le Survivant et ayant une valeur de Dégât de 1 sont considéres comme ayant une valeur de Dégât de 2.
 * Deux cocktails valent mieux qu'un : Lancez un dé à chaque fois que le Survivant défausse un Molotov pour effectuer une Action à distance. Sur un résultat de 3 ou plus, la carte Molotov peut être remise gratuitement dans le Sac à dos.
 * Ambidextre : Le Survivant traite toutes les armes comme si elles possédaient le symbole Double.
-* Barbare : Lors de la résolution d'une Action au corps à corps, le Survivant peut remplacer le nombre de Dés de l'arme (ou des armes) de corps à corps utilisée(s) par le nombre total de Zombies présents dans sa Zone actuelle.
+* Barbare : Lors de la résolution d'une Action au corps à corps, le Survivant peut remplacer le nombre de Dés de l'arme (or des armes) de corps à corps utilisée(s) par le nombre total de Zombies présents dans sa Zone actuelle.
 * Blitz : Une fois par Tour, dépensez 1 Action pour vous déplacer jusqu'à 2 Zones vers une Zone où des Zombies sont à Portée d'une de vos armes à distance équipées, puis gagnez 1 Action à distance gratuite.
 * Soif de sang : [Action] : Une fois par Tour, dépensez 1 Action pour vous déplacer jusqu'à 2 Zones vers une Zone contenant au moins 1 Zombie, puis gagnez 1 Action gratuite du type spécifié (Combat, Corps à corps ou À distance).
 * Leader né : Pendant son Tour, le Survivant peut donner 1 Action gratuite à un autre Survivant pour qu'il l'utilise immédiatement.
@@ -280,7 +280,7 @@ Retirez tous les pions Bruit. Passez le pion Premier Joueur vers la gauche.
 ---
 
 ### NIVEAU DE DANGER — CLARIFICATIONS CLÉS
-* Le Niveau de Danger utilisé pour toutes les lectures de cartes d'Invasion de Zombies est toujours déterminé par le **seul Survivant le plus avancé actuellement sur le plateau**. Si ce Survivant est éliminé, le niveau du Survivant le plus élevé suivant s'applique à partir de ce moment.
+* Le Niveau de Danger utilisé pour toutes les lectures de cartes d'Invasion de Zombies est toujours déterminé by le **seul Survivant le plus avancé actuellement sur le plateau**. Si ce Survivant est éliminé, le niveau du Survivant le plus élevé suivant s'applique à partir de ce moment.
 * Le Niveau de Danger **ne diminue jamais**, même si le Survivant de tête est éliminé en milieu de partie.
 * Les Points d'Adrénaline (PA) sont gagnés individuellement par chaque Survivant. Chaque Survivant suit ses propres PA sur son Tableau de bord. Cependant, **tous les joueurs lisent la ligne d'Invasion de la carte Zombie correspondant au Niveau de Danger le plus élevé parmi tous les Survivants actifs sur le plateau** — et non leur propre niveau individuel.
 * Atteindre un nouveau Niveau de Danger est immédiat : le Survivant débloque instantanément un nouvel emplacement de Compétence et choisit une Compétence. Cela prend effet à partir de sa prochaine Action.
@@ -291,7 +291,7 @@ Retirez tous les pions Bruit. Passez le pion Premier Joueur vers la gauche.
 ### RÉSOLUTION DES BLESSURES & ÉLIMINATION DES SURVIVANTS
 * Lorsque les Zombies attaquent, chaque Zombie présent dans une Zone contenant au moins 1 Survivant inflige 1 Blessure à un Survivant de cette Zone.
 * **Répartition des Blessures** : Les joueurs décident collectivement quel(s) Survivant(s) dans la Zone reçoi(ven)t les Blessures de l'attaque. Les Blessures n'ont pas besoin d'être réparties équitablement — les joueurs peuvent concentrer toutes les Blessures sur un seul Survivant s'ils le souhaitent.
-* Un Survivant est **éliminé** lorsque le nombre de Blessures qu'il a reçues est égal ou supérieur à sa valeur de Santé (3 pour les Survivants classiques, 2 pour les Enfants).
+* Un Survivant est **elimine** lorsque le nombre de Blessures qu'il a reçues est égal ou supérieur à sa valeur de Santé (3 pour les Survivants classiques, 2 pour les Enfants).
 * Lorsqu'un Survivant est éliminé : retirez immédiatement sa figurine du plateau. La partie est perdue à ce moment précis (sauf si la Mission en spécifie autrement ou qu'une compétence comme Régénération s'applique). L'Équipement du Survivant éliminé reste dans la Zone où il a été éliminé et peut être ramassé par d'autres Survivants.
 * **Les Blessures de Tir Ami** suivent les mêmes règles : les joueurs décident quel(s) Survivant(s) de la Zone ciblée reçoi(ven)t la touche.
 * **Les armes de Dégât 2** infligent 2 Blessures par touche aux Survivants (ex. : une attaque à distance manquée avec une arme de Dégât 2 dans une Zone contenant un coéquipier cause 2 Blessures à ce coéquipier).
@@ -327,7 +327,7 @@ Retirez tous les pions Bruit. Passez le pion Premier Joueur vers la gauche.
 === ENTRER DANS UN BÂTIMENT POUR LA PREMIÈRE FOIS ===
 Lorsqu'un Survivant ouvre une porte pour entrer dans un bâtiment pour la première fois (c'est-à-dire que le bâtiment n'a pas encore été ouvert au cours de cette partie), la séquence suivante doit être résolue immédiatement et dans cet ordre exact :
 
-1. OUVRIR LA PORTE : Le Survivant dépense 1 Action pour ouvrir la porte en utilisant un Équipement d'ouverture de porte ou ses mains nues. Placez un pion Porte sur sa face ouverte. La porte ne peut plus être refermée.
+1. OUVRIR LA PORTE : Le Survivant dépense 1 Action pour ouvrir la porte en utilisant un Équipement d'ouverture de porte ou ses mains nues. Placez un pion Porte sur sa face ouverte. La porte ne peut plus être refermées.
 
 2. RÉVÉLER ET FAIRE APPARAÎTRE LES ZOMBIES — ZONES D'OMBRE UNIQUEMENT : Ouvrir un bâtiment pour la première fois déclenche immédiatement une invasion de Zombies à l'intérieur. Les Zombies apparaissent UNIQUEMENT dans les Zones d'ombre (pièces sombres marquées d'un symbole spécifique sur la dalle). Piochez 1 carte Zombie par Zone d'ombre du bâtiment, l'une après l'autre, et placez les Zombies indiqués dans chaque Zone d'ombre correspondante. Les pièces qui ne sont PAS des Zones d'ombre ne reçoivent AUCUN Zombie à cette étape.
 
@@ -339,7 +339,7 @@ CLARIFICATIONS CLÉS :
 - Les Zombies sont placés UNIQUEMENT dans les Zones d'ombre, jamais dans les pièces éclairées, les couloirs ou les zones de rue adjacentes au bâtiment.
 - Si un bâtiment ne comporte aucune Zone d'ombre, aucun Zombie n'est placé lorsqu'il est ouvert pour la première fois.
 - Les bâtiments déjà ouverts au début de la mission ne déclenchent pas cette séquence d'invasion.
-- Un bâtiment is considered opened as soon as any one of its doors is opened. Les portes suivantes menant au même bâtiment ne déclenchent pas une autre invasion.
+- Un bâtiment est considéré ouvert dès qu'une de ses portes est ouverte. Les portes suivantes menant au même bâtiment ne déclenchent pas une autre invasion.
 - Après la révélation initiale, les Zones d'ombre du bâtiment deviennent des Zones d'Invasion régulières et feront apparaître des Zombies normalement pendant l'Étape d'Invasion de la Phase des Zombies.
 
 \`;

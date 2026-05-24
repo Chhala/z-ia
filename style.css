@@ -356,13 +356,12 @@ html, body {
   align-items: center;
 }
 
-textarea#userInput {
+#userInput {
   display: block;
   width: 100%;
   background: transparent;
   border: none;
   outline: none;
-  resize: none;
   font-family: var(--font);
   font-size: 0.92rem;
   font-weight: 300;
@@ -372,8 +371,17 @@ textarea#userInput {
   padding: 10px 12px;
   max-height: 110px;
   overflow-y: auto;
+  word-break: break-word;
+  white-space: pre-wrap;
+  -webkit-user-select: text;
+  user-select: text;
 }
-textarea#userInput::-webkit-scrollbar { display: none; }
+#userInput:empty::before {
+  content: attr(data-placeholder);
+  color: #9a7a7a;
+  pointer-events: none;
+}
+#userInput::-webkit-scrollbar { display: none; }
 
 /* ── ACTION BUTTON ── */
 .action-btn {

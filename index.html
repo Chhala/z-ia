@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
   <meta name="theme-color" content="#0d0000"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -59,7 +59,7 @@
 
   <div class="input-bar">
     <div class="input-wrap">
-      <textarea id="userInput" rows="1" maxlength="800"></textarea>
+      <div id="userInput" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Question" data-placeholder=""></div>
     </div>
     <button class="action-btn mode-mic" id="actionBtn" aria-label="Dicter ou envoyer">
       <!-- SVG swapped by JS -->

@@ -55,6 +55,14 @@ const SVG_SEND = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1280
   </g>
 </svg>`;
 
+// ── CONTENTEDITABLE HELPERS ──────────────────────────────────
+function getInputText() {
+  return userInput.innerText.trim();
+}
+function clearInput() {
+  userInput.innerText = '';
+}
+
 // ── ÉTAT ─────────────────────────────────────────────────────
 let apiKey       = '';
 let history      = [];
@@ -180,19 +188,24 @@ function updateSoundLabel() {
 
 // ── TEXTAREA ─────────────────────────────────────────────────
 function setupInputEvents() {
-  userInput.addEventListener('input', () => { autoResize(); updateActionBtn(); });
+  userInput.addEventListener('input', () => { updateActionBtn(); });
   userInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  });
+  // Prevent paste with formatting
+  userInput.addEventListener('paste', e => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
   });
 }
 
 function autoResize() {
-  userInput.style.height = 'auto';
-  userInput.style.height = Math.min(userInput.scrollHeight, 110) + 'px';
+  // contenteditable auto-sizes; no action needed
 }
 
 function updateActionBtn() {
-  const hasText = userInput.value.trim().length > 0;
+  const hasText = getInputText().length > 0;
   actionBtn.innerHTML = hasText ? SVG_SEND : SVG_MIC;
   actionBtn.classList.toggle('mode-send', hasText);
   actionBtn.classList.toggle('mode-mic',  !hasText);
@@ -218,7 +231,7 @@ function setupActionBtn() {
       stopListening();
       holdActive = false;
     } else {
-      if (userInput.value.trim()) handleSend();
+      if (getInputText()) handleSend();
     }
   });
 
@@ -233,7 +246,7 @@ function setupActionBtn() {
 
 // ── ENVOI ────────────────────────────────────────────────────
 async function handleSend() {
-  const text = userInput.value.trim();
+  const text = getInputText();
   if (!text || loading) return;
   if (!apiKey) { app.classList.add('hidden'); modalOverlay.classList.remove('hidden'); return; }
 
@@ -243,8 +256,7 @@ async function handleSend() {
   addMessage('user', text);
   history.push({ role: 'user', parts: [{ text }] });
 
-  userInput.value = '';
-  autoResize();
+  clearInput();
   updateActionBtn();
   loading = true;
 
@@ -384,8 +396,7 @@ function setupSpeech() {
 
   recognition.onresult = e => {
     const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
-    userInput.value = transcript;
-    autoResize();
+    userInput.innerText = transcript;
     updateActionBtn();
   };
 
@@ -395,7 +406,7 @@ function setupSpeech() {
 
 function startListening() {
   if (!recognition || isListening) return;
-  userInput.value = '';
+  clearInput();
   updateActionBtn();
   try { recognition.start(); } catch(e) {}
 }

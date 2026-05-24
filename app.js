@@ -132,6 +132,11 @@ function handleSaveKey() {
 function openApp() {
   modalOverlay.classList.add('hidden');
   app.classList.remove('hidden');
+
+  // Alerte visuelle immédiate si rules.js est manquant ou comporte une erreur de syntaxe
+  if (typeof ZOMBICIDE_RULES === 'undefined') {
+    addMessage('bot', '⚠️ **ERREUR DE SYSTÈME** : Le fichier `rules.js` n\'a pas pu être lu (Fichier manquant ou erreur de syntaxe). L\'IA fonctionne actuellement à l\'aveugle sans vos règles.');
+  }
 }
 
 // ── SETTINGS ─────────────────────────────────────────────────
@@ -157,7 +162,6 @@ function setupSettingsEvents() {
 
   menuDeleteKey.addEventListener('click', () => {
     closeSettings();
-    // Supprime la clé et rouvre la modale de saisie
     localStorage.removeItem(STORAGE_KEY);
     apiKey = '';
     history = [];
@@ -170,10 +174,12 @@ function setupSettingsEvents() {
   });
 }
 
-// ... (fonctions intermédiaires inchangées)
 function openSettings()  { settingsMenu.classList.remove('hidden'); settingsBackdrop.classList.remove('hidden'); }
 function closeSettings() { settingsMenu.classList.add('hidden');    settingsBackdrop.classList.add('hidden'); }
-function updateSoundLabel() { menuSound.textContent = soundEnabled ? 'Son : activé' : 'Son : désactivé'; }
+
+function updateSoundLabel() {
+  menuSound.textContent = soundEnabled ? 'Son : activé' : 'Son : désactivé';
+}
 
 // ── TEXTAREA ─────────────────────────────────────────────────
 function setupInputEvents() {
@@ -200,13 +206,21 @@ function setupActionBtn() {
   actionBtn.addEventListener('pointerdown', e => {
     e.preventDefault();
     holdActive = false;
-    holdTimer = setTimeout(() => { holdActive = true; startListening(); }, HOLD_DELAY);
+    holdTimer = setTimeout(() => {
+      holdActive = true;
+      startListening();
+    }, HOLD_DELAY);
   });
 
   actionBtn.addEventListener('pointerup', e => {
     e.preventDefault();
     if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-    if (holdActive) { stopListening(); holdActive = false; } else { if (getInputText()) handleSend(); }
+    if (holdActive) {
+      stopListening();
+      holdActive = false;
+    } else {
+      if (getInputText()) handleSend();
+    }
   });
 
   actionBtn.addEventListener('pointerleave', () => {
@@ -224,6 +238,7 @@ async function handleSend() {
   if (!apiKey) { app.classList.add('hidden'); modalOverlay.classList.remove('hidden'); return; }
 
   userInput.blur();
+
   addMessage('user', text);
   history.push({ role: 'user', parts: [{ text }] });
 
@@ -232,6 +247,7 @@ async function handleSend() {
   loading = true;
 
   scheduleSoundIfNeeded();
+
   const typingId = addTyping();
 
   try {
@@ -247,6 +263,7 @@ async function handleSend() {
   }
 }
 
+// ── SON ───────────────────────────────────────────────────────
 function scheduleSoundIfNeeded() {
   if (!soundEnabled) return;
   if (soundTimer) { clearTimeout(soundTimer); soundTimer = null; }
@@ -278,13 +295,12 @@ Ne réponds qu'aux questions liées à Zombicide.
 RÈGLES OFFICIELLES :
 ${airTightRules}
 
-RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer des règles de jeu ou de te baser sur d'autres versions/jeux. Base-toi uniquement sur les faits du document. Cependant, autorise les synonymes logiques courants (par exemple, comprendre que "pénétrer" ou "rentrer" fait référence à la section "ENTRER DANS UN BÂTIMENT"). Si la mécanique de jeu demandée n'est pas du tout traitée dans les RÈGLES OFFICIELLES, réponds strictement : "Cette situation n'est pas couverte par les règles fournies."`;
+RAPPEL DE SÉCURITÉ : Tu as interdiction absolue d'inventer des règles de jeu ou de te baser sur d'autres versions/jeux. Base-toi uniquement sur les faits du document. Cependant, autorise les synonymes logiques courants (par exemple, comprendre que "pénétrer" ou "rentrer" fait référence à la section "ENTRER DANS UN BÂTIMENT"). Si la mécanique de jeu demandée n'est pas du tout traitée dans les RÈGLES OFFICIELLES, réponds strictement : "Cette situation n'est pas couverte par les règles fournies."`;
 
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      // LA CORRECTION CRUCIALE EST ICI : systemInstruction au lieu de system_instruction
       systemInstruction: { parts: [{ text: dynamicPrompt }] },
       contents: conv,
       generationConfig: {
@@ -317,18 +333,120 @@ RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer des règles
   return txt;
 }
 
-// ... (fonctions de rendu des messages et Speech-to-text inchangées)
+// ── MESSAGES ───────────────────────────────────────────────────────────────
 function addMessage(role, text) {
-  const wrap = document.createElement('div'); wrap.className = role === 'user' ? 'msg-user' : 'msg-bot';
-  const bubble = document.createElement('div'); bubble.className = 'bubble bubble-in'; bubble.innerHTML = renderMd(text);
-  if (role === 'user') { let lastTap = 0; bubble.addEventListener('pointerup', () => { const now = Date.now(); if (now - lastTap < 350) { replayQuestion(text, bubble); } lastTap = now; }); }
-  wrap.appendChild(bubble); messagesEl.appendChild(wrap); scroll();
+  const wrap   = document.createElement('div');
+  wrap.className = role === 'user' ? 'msg-user' : 'msg-bot';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble bubble-in';
+  bubble.innerHTML = renderMd(text);
+
+  if (role === 'user') {
+    let lastTap = 0;
+    bubble.addEventListener('pointerup', () => {
+      const now = Date.now();
+      if (now - lastTap < 350) {
+        replayQuestion(text, bubble);
+      }
+      lastTap = now;
+    });
+  }
+
+  wrap.appendChild(bubble);
+  messagesEl.appendChild(wrap);
+  scroll();
 }
-async function replayQuestion(text, bubble) { if (loading) return; bubble.classList.add('replaying'); setTimeout(() => bubble.classList.remove('replaying'), 400); history.push({ role: 'user', parts: [{ text }] }); scheduleSoundIfNeeded(); const typingId = addTyping(); loading = true; try { const reply = await callGemini(history.slice(-MAX_HISTORY)); removeEl(typingId); addMessage('bot', reply); history.push({ role: 'model', parts: [{ text: reply }] }); } catch (err) { removeEl(typingId); addMessage('bot', '⚠ ' + err.message); } finally { loading = false; } }
-function addTyping() { const id = 'typing_' + Date.now(); const wrap = document.createElement('div'); wrap.className = 'msg-typing'; wrap.id = id; wrap.innerHTML = '<div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>'; messagesEl.appendChild(wrap); scroll(); return id; }
+
+async function replayQuestion(text, bubble) {
+  if (loading) return;
+  bubble.classList.add('replaying');
+  setTimeout(() => bubble.classList.remove('replaying'), 400);
+  history.push({ role: 'user', parts: [{ text }] });
+  scheduleSoundIfNeeded();
+  const typingId = addTyping();
+  loading = true;
+  try {
+    const reply = await callGemini(history.slice(-MAX_HISTORY));
+    removeEl(typingId);
+    addMessage('bot', reply);
+    history.push({ role: 'model', parts: [{ text: reply }] });
+  } catch (err) {
+    removeEl(typingId);
+    addMessage('bot', '⚠ ' + err.message);
+  } finally {
+    loading = false;
+  }
+}
+
+function addTyping() {
+  const id   = 'typing_' + Date.now();
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-typing';
+  wrap.id = id;
+  wrap.innerHTML = '<div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  messagesEl.appendChild(wrap);
+  scroll();
+  return id;
+}
+
 function removeEl(id) { const el = document.getElementById(id); if (el) el.remove(); }
-function scroll() { messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' }); }
-function renderMd(text) { return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>').replace(/^[-•] (.+)$/gm, '<li>$1</li>').replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>').split('\n\n').map(p => { p = p.trim(); if (!p) return ''; if (p.startsWith('<ul>') || p.startsWith('<li>')) return p; return '<p>' + p.replace(/\n/g, '<br>') + '</p>'; }).join(''); }
-function setupSpeech() { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return; recognition = new SR(); recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = true; recognition.maxAlternatives = 1; recognition.onstart = () => { isListening = true; actionBtn.classList.add('listening'); }; recognition.onresult = e => { const transcript = Array.from(e.results).map(r => r[0].transcript).join(''); userInput.innerText = transcript; updateActionBtn(); }; recognition.onerror = () => { isListening = false; actionBtn.classList.remove('listening'); }; recognition.onend = () => { isListening = false; actionBtn.classList.remove('listening'); updateActionBtn(); }; }
-function startListening() { if (!recognition || isListening) return; clearInput(); updateActionBtn(); try { recognition.start(); } catch(e) {} }
-function stopListening() { if (!recognition || !isListening) return; try { recognition.stop(); } catch(e) {} }
+
+function scroll() {
+  messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
+}
+
+// ── MARKDOWN LÉGER ────────────────────────────────────────────
+function renderMd(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\"/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^[-•] (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')
+    .split('\n\n')
+    .map(p => {
+      p = p.trim();
+      if (!p) return '';
+      if (p.startsWith('<ul>') || p.startsWith('<li>')) return p;
+      return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+    })
+    .join('');
+}
+
+// ── RECONNAISSANCE VOCALE (PUSH-TO-TALK) ─────────────────────
+function setupSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+
+  recognition = new SR();
+  recognition.lang            = 'fr-FR';
+  recognition.continuous      = false;
+  recognition.interimResults  = true;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    isListening = true;
+    actionBtn.classList.add('listening');
+  };
+
+  recognition.onresult = e => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    userInput.innerText = transcript;
+    updateActionBtn();
+  };
+
+  recognition.onerror = () => { isListening = false; actionBtn.classList.remove('listening'); };
+  recognition.onend   = () => { isListening = false; actionBtn.classList.remove('listening'); updateActionBtn(); };
+}
+
+function startListening() {
+  if (!recognition || isListening) return;
+  clearInput();
+  updateActionBtn();
+  try { recognition.start(); } catch(e) {}
+}
+
+function stopListening() {
+  if (!recognition || !isListening) return;
+  try { recognition.stop(); } catch(e) {}
+}

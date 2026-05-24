@@ -1,4 +1,4 @@
-const CACHE = 'zombicide-v4';
+const CACHE = 'zombicide-v5';
 const FILES = ['./', './index.html', './style.css', './app.js', './rules.js', './bg.jpg', './manifest.json'];
 
 self.addEventListener('install',  e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });

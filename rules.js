@@ -70,7 +70,7 @@ Chaque Round de jeu se déroule comme suit :
 * Balèze : Inflige 1 Blessure. Tué par une touche de Dégât 2 ; les armes de Dégât 1 n'ont absolument aucun effet sur eux. Rapporte 1 Point d'Adrénaline.
 * Forcené : Inflige 1 Blessure. Tué par une touche de Dégât 1. Rapporte 1 Point d'Adrénaline. Spécial : Les Forcenés ont 2 Actions à chaque fois qu'ils s'activent.
 * Abomination : Inflige 1 Blessure. Seules les armes infligeant 3 Dégâts ou plus, ou un cocktail Molotov, peuvent la tuer. Rapporte 5 Points d'Adrénaline. Une seule Abomination peut se trouver sur le plateau à un moment donné ; si une autre carte en fait apparaître une, elle obtient une Activation supplémentaire à la place.
-* Pénurie de figurines : Si vous venez à manquer de figurines du type requis lors d'une apparition, placez les figurines restantes, quelles qu'elles soient. Ensuite, tous les Zombies du type indiqué présents sur le plateau effectuent immédiatement une Activation supplémentaire. Plusieurs activations supplémentaires peuvent se produire à la suite.
+* Pénurie de figurines : Si vous viens à manquer de figurines du type requis lors d'une apparition, placez les figurines restantes, quelles qu'elles soient. Ensuite, tous les Zombies du type indiqué présents sur le plateau effectuent immédiatement une Activation supplémentaire. Plusieurs activations supplémentaires peuvent se produire à la suite.
 
 #### Règles spéciales des Abominations de la Boîte de Base :
 * Hobomination : Les Survivants se trouvant dans sa Zone ne peuvent pas effectuer d'Actions de Combat.
@@ -167,7 +167,7 @@ Chaque Round de jeu se déroule comme suit :
 * +1 Portée max : La Portée maximale des armes à distance utilisées par le Survivant est augmentée de 1.
 * +1 Zone par Déplacement : Lorsque le Survivant dépense 1 Action pour se Déplacer, il peut se déplacer de 1 ou 2 Zones au lieu d'une. Entrer dans une Zone contenant des Zombies met toujours fin au Déplacement.
 * +1 au résultat du dé : [Action] : Le Survivant ajoute 1 au résultat de chaque dé lancé lors des Actions du type spécifié (Combat, Corps à corps ou À distance). Le résultat maximal est toujours de 6.
-* [Type d'Action] : Dégât 2 : Les armes du type indiqué (Combat, Corps à corps ou À distance) utilisées par le Survivant et ayant une valeur de Dégât de 1 sont considérées comme ayant une valeur de Dégât de 2.
+* [Type d'Action] : Dégât 2 : Les armes du type indiqué (Combat, Corps à corps ou À distance) utilisées par le Survivant et ayant une valeur de Dégât de 1 sont considéres comme ayant une valeur de Dégât de 2.
 * Deux cocktails valent mieux qu'un : Lancez un dé à chaque fois que le Survivant défausse un Molotov pour effectuer une Action à distance. Sur un résultat de 3 ou plus, la carte Molotov peut être remise gratuitement dans le Sac à dos.
 * Ambidextre : Le Survivant traite toutes les armes comme si elles possédaient le symbole Double.
 * Barbare : Lors de la résolution d'une Action au corps à corps, le Survivant peut remplacer le nombre de Dés de l'arme (ou des armes) de corps à corps utilisée(s) par le nombre total de Zombies présents dans sa Zone actuelle.
@@ -195,7 +195,7 @@ Chaque Round de jeu se déroule comme suit :
 * Arme improvisée : Corps à corps : Une fois par Tour, effectuez une Attaque au corps à corps gratuite avec les caractéristiques suivantes : Portée 0, Dés 2, Précision 4+, Dégâts 1.
 * Arme improvisée : À distance : Une fois par Tour, effectuez une Attaque à distance gratuite avec les caractéristiques suivantes : Portée 1-1, Dés 2, Précision 4+, Dégâts 1.
 * C'est tout ce que tu as dans le ventre ? : Utilisé à tout moment lorsque le Survivant est sur le point de subir des Blessures. Annulez 1 Blessure pour chaque carte Équipement défaussée de son inventaire.
-* Saut : Une fois par Tour, dépensez 1 Action pour vous déplacer de 2 Zones, en ignorant tout ce qui se trouve dans la Zone intermédiaire, à l'exception des murs et des portes fermées. Les pénalités de déplacement de la Zone de départ s'appliquent.
+* Saut : Une fois par Tour, dépensez 1 Action pour vous déplacer de 2 Zones, en ignorant tout ce qui se trouve dans la Zone intermédiaire, à l'exception des murs et des portes fermées. Les pénalités de déplacement de la Zone de départ s'applquent.
 * Sauveteur : Une fois par Tour et gratuitement, sélectionnez une Zone contenant au moins 1 Zombie et 1 Survivant à une Portée de 1 partageant une LDV et un chemin dégagé ; ramenez les Survivants choisis dans la Zone de l'utilisateur sans pénalité.
 * Profil bas : Le Survivant ne peut pas être touché par un Tir Ami (complètement ignoré lorsque quelqu'un tire dans la Zone où il se trouve). Les règles du Molotov s'appliquent toujours.
 * Chanceux : Pour chaque Action effectuée, le joueur peut choisir de relancer tous les dés une fois de plus. Se cumule avec les relances d'armes.

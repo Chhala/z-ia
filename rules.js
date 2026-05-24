@@ -342,4 +342,4 @@ CLARIFICATIONS CLÉS :
 - Un bâtiment est considéré ouvert dès qu'une de ses portes est ouverte. Les portes suivantes menant au même bâtiment ne déclenchent pas une autre invasion.
 - Après la révélation initiale, les Zones d'ombre du bâtiment deviennent des Zones d'Invasion régulières et feront apparaître des Zombies normalement pendant l'Étape d'Invasion de la Phase des Zombies.
 
-\`;
+`;

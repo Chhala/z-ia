@@ -304,7 +304,7 @@ async function callGemini(conv) {
       system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: conv,
       generationConfig: {
-        temperature: 0.15,
+        temperature: 0.35,
         topK: 32,
         topP: 0.9,
         maxOutputTokens: 2500,

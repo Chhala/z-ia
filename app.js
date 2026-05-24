@@ -323,7 +323,7 @@ RAPPEL DE SÉCURITÉ : Tu as interdiction absolue d'inventer des règles de jeu 
     const m = e?.error?.message || '';
     if (res.status === 400) throw new Error('Clé API invalide ou requête incorrecte.');
     if (res.status === 403) throw new Error('Accès refusé. Vérifie ta clé API.');
-    if (res.status === 429) throw new Error('Quota dépassé. Attends quelques secondes et réessaie.');
+    if (res.status === 429) throw new Error('Serveurs surchargés. Attends quelques secondes et réessaie.');
     throw new Error(m || `Erreur HTTP ${res.status}`);
   }
 
@@ -399,7 +399,7 @@ function scroll() {
 function renderMd(text) {
   return text
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\*\*(.+?)\*\"/g, '<strong>$1</strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/^[-•] (.+)$/gm, '<li>$1</li>')
     .replace(/(<li>[\s\S]+?<\/li>)/g, '<ul>$1</ul>')

@@ -5,18 +5,6 @@ const SOUND_KEY    = 'zombicide_sound_v2';
 const MAX_HISTORY  = 14; // nb max d'échanges conservés (7 questions + 7 réponses)
 const HOLD_DELAY   = 900; // ms pour activer le micro
 
-const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
-Tu réponds UNIQUEMENT en français, de manière claire et précise.
-Tu bases tes réponses exclusivement sur les règles officielles fournies, en adaptant fidèlement le sens sans jamais inventer ou extrapoler de faits.
-Si une situation n'est pas couverte, dis-le clairement.
-Sois concis. Pas d'intro ni de formule de politesse.
-IMPORTANT : Si un joueur pose une question globale mais que la règle dépend d'une condition précise (comme "pour la première fois"), ne réponds pas par un simple "Non". Dis plutôt : "Seulement si c'est la première fois qu'on l'ouvre : [Règle]".
-IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux zones d'ombre, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
-Ne réponds qu'aux questions liées à Zombicide.
-
-RÈGLES OFFICIELLES :
-${typeof ZOMBICIDE_RULES !== 'undefined' ? ZOMBICIDE_RULES : '[Règles non chargées]'}`;
-
 // SVG inline — micro
 const SVG_MIC = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 655 1280">
   <g transform="translate(0,1280) scale(0.1,-0.1)" fill="#8b1a1a" stroke="none">
@@ -298,11 +286,27 @@ function scheduleSoundIfNeeded() {
 async function callGemini(conv) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
+  const airTightRules = typeof ZOMBICIDE_RULES !== 'undefined' ? ZOMBICIDE_RULES : '[Règles non chargées]';
+
+  const dynamicPrompt = `Tu es un expert des règles de Zombicide 2e édition.
+Tu réponds UNIQUEMENT en français, de manière claire et précise.
+Tu bases tes réponses exclusivement sur les règles officielles fournies, en adaptant fidèlement le sens sans jamais inventer ou extrapoler de faits.
+Si une situation n'est pas couverte, dis-le clairement.
+Sois concis. Pas d'intro ni de formule de politesse.
+IMPORTANT : Si un joueur pose une question globale mais que la règle dépend d'une condition précise (comme "pour la première fois"), ne réponds pas par un simple "Non". Dis plutôt : "Seulement si c'est la première fois qu'on l'ouvre : [Règle]".
+IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux zones d'ombre, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
+Ne réponds qu'aux questions liées à Zombicide.
+
+RÈGLES OFFICIELLES :
+${airTightRules}
+
+RAPPEL DE SÉCURITÉ CRUCIAL : Tu as interdiction absolue d'inventer une règle ou de te baser sur d'autres jeux. Si la situation demandée n'est pas explicitement décrite dans les RÈGLES OFFICIELLES ci-dessus, réponds strictement : "Cette situation n'est pas couverte par les règles fournies."`;
+
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      system_instruction: { parts: [{ text: dynamicPrompt }] },
       contents: conv,
       generationConfig: {
         temperature: 0.35,

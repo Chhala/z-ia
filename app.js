@@ -1,17 +1,17 @@
 // ── CONFIG ───────────────────────────────────────────────────
-const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash-lite';
 const STORAGE_KEY  = 'zombicide_api_key_v2';
 const SOUND_KEY    = 'zombicide_sound_v2';
-const MAX_HISTORY  = 6; // nb max d'échanges conservés (3 questions + 3 réponses)
+const MAX_HISTORY  = 14; // nb max d'échanges conservés (7 questions + 7 réponses)
 const HOLD_DELAY   = 900; // ms pour activer le micro
 
 const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
 Tu réponds UNIQUEMENT en français, de manière claire et précise.
-Tu bases tes réponses exclusivement sur les règles officielles fournies, mot pour mot si nécessaire.
+Tu bases tes réponses exclusivement sur les règles officielles fournies, en adaptant fidèlement le sens sans jamais inventer ou extrapoler de faits.
 Si une situation n'est pas couverte, dis-le clairement.
 Sois concis. Pas d'intro ni de formule de politesse.
 Ne réponds qu'aux questions liées à Zombicide.
-IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux Dark Zones, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
+IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux zones d'ombre, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
 
 RÈGLES OFFICIELLES :
 ${typeof ZOMBICIDE_RULES !== 'undefined' ? ZOMBICIDE_RULES : '[Règles non chargées]'}`;

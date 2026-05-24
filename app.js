@@ -332,8 +332,6 @@ async function callGemini(conv) {
 }
 
 // ── MESSAGES ───────────────────────────────────────────────────────────────
-const BUBBLE_HOLD_DELAY = 700;
-
 function addMessage(role, text) {
   const wrap   = document.createElement('div');
   wrap.className = role === 'user' ? 'msg-user' : 'msg-bot';
@@ -342,14 +340,15 @@ function addMessage(role, text) {
   bubble.innerHTML = renderMd(text);
 
   if (role === 'user') {
-    let bht = null;
-    bubble.addEventListener('pointerdown', e => {
-      if (e.target !== bubble) return;
-      bht = setTimeout(() => { bht = null; replayQuestion(text, bubble); }, BUBBLE_HOLD_DELAY);
+    // Double tap pour rejouer la question
+    let lastTap = 0;
+    bubble.addEventListener('pointerup', () => {
+      const now = Date.now();
+      if (now - lastTap < 350) {
+        replayQuestion(text, bubble);
+      }
+      lastTap = now;
     });
-    bubble.addEventListener('pointerup',    () => { if (bht) { clearTimeout(bht); bht = null; } });
-    bubble.addEventListener('pointerleave', () => { if (bht) { clearTimeout(bht); bht = null; } });
-    bubble.addEventListener('contextmenu',  e  => e.preventDefault());
   }
 
   wrap.appendChild(bubble);

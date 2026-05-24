@@ -323,4 +323,23 @@ Remove all Noise tokens. Pass the First Player token to the left.
 * Epic Weapons follow all normal Equipment rules: they occupy Hand or Backpack slots, can be traded, and are subject to all normal weapon rules (Dual, Reload, etc.) unless their card states otherwise.
 * Epic Weapons are generally significantly more powerful than standard Equipment cards and often have unique traits not found on regular weapons.
 * Only 1 Epic Weapon Crate can be taken per Crate token on the board (the token is removed after use).
+
+=== ENTERING A BUILDING FOR THE FIRST TIME ===
+When a Survivor opens a door to enter a building for the first time (i.e. the building has not yet been opened this game), the following sequence must be resolved immediately and in this exact order:
+
+1. OPEN THE DOOR: The Survivor spends 1 Action to open the door using Door-opening Equipment or bare hands. Place a Door token on its open side. The door cannot be closed again.
+
+2. REVEAL AND SPAWN ZOMBIES — DARK ZONES ONLY: Opening a building for the first time immediately triggers a Zombie spawn inside. Zombies ONLY appear in Dark Zones (darkened rooms marked with a specific symbol on the tile). Draw 1 Zombie card per Dark Zone in the building, one after the other, and place the indicated Zombies in each corresponding Dark Zone. Rooms that are NOT Dark Zones receive NO Zombies at this stage.
+
+3. SURVIVORS MAY NOW ENTER: After the door is open and Zombies have been placed, Survivors may move into the building normally on their remaining Actions.
+
+4. SEARCH (optional): Once inside a building room with no Zombies, a Survivor may spend 1 Action to Search and draw 1 Equipment card.
+
+KEY CLARIFICATIONS:
+- Zombies are placed ONLY in Dark Zones, never in lit rooms, corridors, or street zones adjacent to the building.
+- If a building has no Dark Zones, no Zombies are placed when it is first opened.
+- Buildings that are already open at the start of the mission do not trigger this spawn sequence.
+- A building is considered opened as soon as any one of its doors is opened. Subsequent doors into the same building do not trigger another spawn.
+- After the initial reveal, the building's Dark Zones become regular Spawn Zones and will spawn Zombies normally during the Zombie Phase Spawn Step.
+
 \`;

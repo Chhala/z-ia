@@ -2,6 +2,7 @@
 const GEMINI_MODEL = 'gemini-2.5-flash';
 const STORAGE_KEY  = 'zombicide_api_key_v2';
 const SOUND_KEY    = 'zombicide_sound_v2';
+const MAX_HISTORY  = 6; // nb max d'échanges conservés (3 questions + 3 réponses)
 const HOLD_DELAY   = 900; // ms pour activer le micro
 
 const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
@@ -266,7 +267,7 @@ async function handleSend() {
   const typingId = addTyping();
 
   try {
-    const reply = await callGemini(history);
+    const reply = await callGemini(history.slice(-MAX_HISTORY));
     removeEl(typingId);
     addMessage('bot', reply);
     history.push({ role: 'model', parts: [{ text: reply }] });
@@ -366,7 +367,7 @@ async function replayQuestion(text, bubble) {
   const typingId = addTyping();
   loading = true;
   try {
-    const reply = await callGemini(history);
+    const reply = await callGemini(history.slice(-MAX_HISTORY));
     removeEl(typingId);
     addMessage('bot', reply);
     history.push({ role: 'model', parts: [{ text: reply }] });

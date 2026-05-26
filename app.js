@@ -1,9 +1,19 @@
 // ── CONFIG ───────────────────────────────────────────────────
-const GEMINI_MODEL = 'gemini-2.5-flash-lite';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 const STORAGE_KEY  = 'zombicide_api_key_v2';
 const SOUND_KEY    = 'zombicide_sound_v2';
-const MAX_HISTORY  = 14; // nb max d'échanges conservés (7 questions + 7 réponses)
-const HOLD_DELAY   = 900; // ms pour activer le micro
+const MAX_HISTORY  = 6; // nb max d'échanges conservés (3 questions + 3 réponses)
+
+const SYSTEM_PROMPT = `Tu es un expert des règles de Zombicide 2e édition.
+Tu réponds UNIQUEMENT en français, de manière claire et précise.
+Tu bases tes réponses exclusivement sur les règles officielles fournies, mot pour mot si nécessaire.
+Si une situation n'est pas couverte, dis-le clairement.
+Sois concis. Pas d'intro ni de formule de politesse.
+Ne réponds qu'aux questions liées à Zombicide.
+IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux Dark Zones, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
+
+RÈGLES OFFICIELLES :
+${typeof ZOMBICIDE_RULES !== 'undefined' ? ZOMBICIDE_RULES : '[Règles non chargées]'}`;
 
 // SVG inline — micro
 const SVG_MIC = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 655 1280">
@@ -61,11 +71,9 @@ let loading      = false;
 let soundEnabled = true;
 let soundTimer   = null;
 
-// Micro / push-to-talk
+// Micro / toggle
 let recognition  = null;
 let isListening  = false;
-let holdTimer    = null;
-let holdActive   = false;
 
 // ── DOM ──────────────────────────────────────────────────────
 const modalOverlay     = document.getElementById('modalOverlay');
@@ -132,11 +140,6 @@ function handleSaveKey() {
 function openApp() {
   modalOverlay.classList.add('hidden');
   app.classList.remove('hidden');
-
-  // Alerte visuelle immédiate si rules.js est manquant ou comporte une erreur de syntaxe
-  if (typeof ZOMBICIDE_RULES === 'undefined') {
-    addMessage('bot', '⚠️ **ERREUR DE SYSTÈME** : Le fichier `rules.js` n\'a pas pu être lu (Fichier manquant ou erreur de syntaxe). L\'IA fonctionne actuellement à l\'aveugle sans vos règles.');
-  }
 }
 
 // ── SETTINGS ─────────────────────────────────────────────────
@@ -162,6 +165,7 @@ function setupSettingsEvents() {
 
   menuDeleteKey.addEventListener('click', () => {
     closeSettings();
+    // Supprime la clé et rouvre la modale de saisie
     localStorage.removeItem(STORAGE_KEY);
     apiKey = '';
     history = [];
@@ -187,11 +191,16 @@ function setupInputEvents() {
   userInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   });
+  // Prevent paste with formatting
   userInput.addEventListener('paste', e => {
     e.preventDefault();
     const text = e.clipboardData.getData('text/plain');
     document.execCommand('insertText', false, text);
   });
+}
+
+function autoResize() {
+  // contenteditable auto-sizes; no action needed
 }
 
 function updateActionBtn() {
@@ -201,31 +210,19 @@ function updateActionBtn() {
   actionBtn.classList.toggle('mode-mic',  !hasText);
 }
 
-// ── ACTION BUTTON — envoi + push-to-talk ─────────────────────
+// ── ACTION BUTTON — envoi + toggle micro ─────────────
 function setupActionBtn() {
-  actionBtn.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    holdActive = false;
-    holdTimer = setTimeout(() => {
-      holdActive = true;
-      startListening();
-    }, HOLD_DELAY);
-  });
-
-  actionBtn.addEventListener('pointerup', e => {
-    e.preventDefault();
-    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-    if (holdActive) {
+  actionBtn.addEventListener('click', () => {
+    if (isListening) {
+      // En cours d’écoute → arrête
       stopListening();
-      holdActive = false;
+    } else if (getInputText()) {
+      // Champ avec texte → envoie
+      handleSend();
     } else {
-      if (getInputText()) handleSend();
+      // Champ vide → démarre la dictée
+      startListening();
     }
-  });
-
-  actionBtn.addEventListener('pointerleave', () => {
-    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-    if (isListening) { stopListening(); holdActive = false; }
   });
 
   actionBtn.addEventListener('contextmenu', e => e.preventDefault());
@@ -237,6 +234,7 @@ async function handleSend() {
   if (!text || loading) return;
   if (!apiKey) { app.classList.add('hidden'); modalOverlay.classList.remove('hidden'); return; }
 
+  // Ferme le clavier sur iOS
   userInput.blur();
 
   addMessage('user', text);
@@ -267,8 +265,8 @@ async function handleSend() {
 function scheduleSoundIfNeeded() {
   if (!soundEnabled) return;
   if (soundTimer) { clearTimeout(soundTimer); soundTimer = null; }
-  if (Math.random() > 0.70) return;
-  const delay = (7 + Math.random() * 8) * 1000;
+  if (Math.random() > 0.70) return; // 30% : silence
+  const delay = (7 + Math.random() * 8) * 1000; // 7–15 s
   soundTimer = setTimeout(() => {
     if (!soundEnabled) return;
     audioEl.currentTime = 0;
@@ -281,30 +279,14 @@ function scheduleSoundIfNeeded() {
 async function callGemini(conv) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
-  const airTightRules = typeof ZOMBICIDE_RULES !== 'undefined' ? ZOMBICIDE_RULES : '[Règles non chargées]';
-
-  const dynamicPrompt = `Tu es un expert des règles de Zombicide 2e édition.
-Tu réponds UNIQUEMENT en français, de manière claire et précise.
-Tu bases tes réponses exclusivement sur les règles officielles fournies, en adaptant fidèlement le sens sans jamais inventer ou extrapoler de faits.
-Si une situation n'est pas couverte, dis-le clairement.
-Sois concis mais exhaustif. NE TRONQUE JAMAIS une séquence d'étapes numériques ou une liste de conditions. Donne toujours l'intégralité de la procédure. Pas d'intro ni de formule de politesse.
-IMPORTANT : Si un joueur pose une question globale mais que la règle dépend d'une condition précise (comme "pour la première fois"), ne réponds pas par un simple "Non". Dis plutôt : "Seulement si c'est la première fois qu'on l'ouvre : [Règle]".
-IMPORTANT : Ne généralise jamais une règle qui s'applique à un sous-ensemble spécifique. Par exemple, si une règle s'applique uniquement aux zones d'ombre, ne dis pas qu'elle s'applique à toutes les zones. Cite toujours le contexte exact (type de zone, type de zombie, condition spécifique) tel qu'il est écrit dans les règles.
-Ne réponds qu'aux questions liées à Zombicide.
-
-RÈGLES OFFICIELLES :
-${airTightRules}
-
-RAPPEL DE SÉCURITÉ : Tu as interdiction absolue d'inventer des règles de jeu ou de te baser sur d'autres versions/jeux. Base-toi uniquement sur les faits du document. Cependant, autorise les synonymes logiques courants (par exemple, comprendre que "pénétrer" ou "rentrer" fait référence à la section "ENTRER DANS UN BÂTIMENT"). Si la mécanique de jeu demandée n'est pas du tout traitée dans les RÈGLES OFFICIELLES, réponds strictement : "Cette situation n'est pas couverte par les règles fournies."`;
-
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: dynamicPrompt }] },
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: conv,
       generationConfig: {
-        temperature: 0.35,
+        temperature: 0.15,
         topK: 32,
         topP: 0.9,
         maxOutputTokens: 2500,
@@ -323,7 +305,7 @@ RAPPEL DE SÉCURITÉ : Tu as interdiction absolue d'inventer des règles de jeu 
     const m = e?.error?.message || '';
     if (res.status === 400) throw new Error('Clé API invalide ou requête incorrecte.');
     if (res.status === 403) throw new Error('Accès refusé. Vérifie ta clé API.');
-    if (res.status === 429) throw new Error('Serveurs surchargés. Attends quelques secondes et réessaie.');
+    if (res.status === 429) throw new Error('Quota dépassé. Attends quelques secondes et réessaie. Si le problème persiste, vérifie les limites de ta clé sur aistudio.google.com');
     throw new Error(m || `Erreur HTTP ${res.status}`);
   }
 
@@ -342,6 +324,7 @@ function addMessage(role, text) {
   bubble.innerHTML = renderMd(text);
 
   if (role === 'user') {
+    // Double tap pour rejouer la question
     let lastTap = 0;
     bubble.addEventListener('pointerup', () => {
       const now = Date.now();
